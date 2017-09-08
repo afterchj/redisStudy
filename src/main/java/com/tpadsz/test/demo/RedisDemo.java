@@ -11,7 +11,7 @@ import redis.clients.jedis.ShardedJedisPool;
  */
 public class RedisDemo {
 
-    private static ApplicationContext ac = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+    private static ApplicationContext ac = new ClassPathXmlApplicationContext("classpath:application_Context.xml");
     private static ShardedJedisPool shardedJedisPool = (ShardedJedisPool) ac.getBean("shardedJedisPool");
     @Test
     public void test() {

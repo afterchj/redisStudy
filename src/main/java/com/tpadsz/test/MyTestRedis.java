@@ -26,19 +26,20 @@ public class MyTestRedis {
     @Test
     public void testString() {
         //-----添加数据----------
-        jedis.set("password", ".chen");
-        jedis.set("name", "xinxin");//向key-->name中放入了value-->xinxin
-        System.out.println(jedis.get("myname") + "," + jedis.get("password"));//执行结果：
-
-        jedis.append("myname", " is my lover"); //拼接
-        System.out.println(jedis.get("myname"));
-
-        jedis.del("name");  //删除某个键
-        System.out.println(jedis.get("name"));
-        //设置多个键值对
-        jedis.mset("name", "liuling", "age", "23", "qq", "476777XXX");
-        jedis.incr("age"); //进行加1操作
-        System.out.println(jedis.get("name") + "-" + jedis.get("age") + "-" + jedis.get("qq"));
+//        jedis.set("password", ".chen");
+//        jedis.set("name", "xinxin");//向key-->name中放入了value-->xinxin
+//        System.out.println(jedis.get("myname") + "," + jedis.get("password"));//执行结果：
+//
+//        jedis.append("myname", " is my lover"); //拼接
+//        System.out.println(jedis.get("myname"));
+//
+//        jedis.del("name");  //删除某个键
+//        System.out.println(jedis.get("name"));
+//        //设置多个键值对
+//        jedis.mset("name", "liuling", "age", "23", "qq", "476777XXX");
+//        jedis.incr("age"); //进行加1操作
+        jedis.set("age", "22");
+        System.out.println(jedis.get("name") + "\n" + jedis.get("age") + "\n" + jedis.get("qq"));
 
     }
 
@@ -48,29 +49,29 @@ public class MyTestRedis {
     @Test
     public void testMap() {
         //-----添加数据----------
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("uid", "al121ter");
-        map.put("type", "3");
-        map.put("imei", "766256wqw898");
-        jedis.hmset("homgjian", map);
+//        Map<String, String> map = new HashMap<String, String>();
+//        map.put("uid", "al121ter");
+//        map.put("type", "3");
+//        map.put("imei", "766256wqw898");
+//        jedis.hmset("homgjian", map);
 
         //取出user中的name，执行结果:[minxr]-->注意结果是一个泛型的List
         //第一个参数是存入redis中map对象的key，后面跟的是放入map中的对象的key，后面的key可以跟多个，是可变参数
         List<String> user = jedis.hmget("testMap", "name", "age", "qq");
-        System.out.println(user);
+        System.out.println("userList=" + user);
 
         //删除map中的某个键值
         // jedis.hdel("user", "age");
-        System.out.println(jedis.hmget("testMap", "age")); //因为删除了，所以返回的是null
-        System.out.println(jedis.hlen("testMap")); //返回key为user的键中存放的值的个数2
-        System.out.println(jedis.exists("testMap"));//是否存在key为user的记录 返回true
-        System.out.println(jedis.hkeys("testMap"));//返回map对象中的所有key
-        System.out.println(jedis.hvals("testMap"));//返回map对象中的所有value
-
+        System.out.println("hmget=" + jedis.hmget("testMap", "age")); //因为删除了，所以返回的是null
+        System.out.println("hlen=" + jedis.hlen("testMap")); //返回key为user的键中存放的值的个数2
+        System.out.println("exists=" + jedis.exists("testMap"));//是否存在key为user的记录 返回true
+        System.out.println("hkeys=" + jedis.hkeys("testMap"));//返回map对象中的所有key
+        System.out.println("hvals=" + jedis.hvals("testMap"));//返回map对象中的所有value
         Iterator<String> iter = jedis.hkeys("testMap").iterator();
         while (iter.hasNext()) {
             String key = iter.next();
-            System.out.println(key + ":" + jedis.hmget("testMap", key));
+            System.out.print("key=" + key);
+            System.out.println(",value=" + jedis.hmget("testMap", key).get(0));
         }
     }
 
@@ -107,34 +108,36 @@ public class MyTestRedis {
     @Test
     public void testSet() {
         //添加
-        jedis.sadd("testSet","liuling");
-        jedis.sadd("testSet","xinxin");
-        jedis.sadd("testSet","ling");
-        jedis.sadd("testSet","zhangxinxin");
-        jedis.sadd("testSet","who");
-        //移除noname
-       jedis.srem("users","who");
+//        jedis.sadd("testSet", "liuling");
+//        jedis.sadd("testSet", "xinxin");
+//        jedis.sadd("testSet", "ling");
+//        jedis.sadd("testSet", "zhangxinxin");
+//        jedis.sadd("testSet", "who");
+//        //移除noname
+//        jedis.srem("users", "who");
         Set<String> users = jedis.smembers("testSet");//获取所有加入的value
         Iterator<String> it = users.iterator();
         while (it.hasNext()) {
             String user = it.next();
             System.out.println("user\t" + user);
         }
-        System.out.println(users);
+        System.out.println("usersSet="+users);
         System.out.println(jedis.sismember("testSet", "who"));//判断 who 是否是users集合的元素
         for (int i = 0; i < 3; i++) {
             System.out.println(jedis.srandmember("testSet"));//随机返回member
         }
         System.out.println(jedis.scard("testSet"));//返回集合的元素个数
     }
+
     @Test
-    public void testHash(){
-        Map<String,String> hash=new HashMap<String, String>();
-        hash.put("username","after");
-        hash.put("password","123");
-        hash.put("age","23");
-        jedis.hmset("myhash",hash);
+    public void testHash() {
+        Map<String, String> hash = new HashMap<String, String>();
+        hash.put("username", "after");
+        hash.put("password", "123");
+        hash.put("age", "23");
+        jedis.hmset("myhash", hash);
     }
+
     @Test
     public void test() throws InterruptedException {
         //jedis 排序
@@ -148,6 +151,7 @@ public class MyTestRedis {
         System.out.println(jedis.sort("a")); //[1, 3, 6, 9]  //输入排序后结果
         System.out.println(jedis.lrange("a", 0, -1));
     }
+
     @Test
     public void testRedisPool() {
         RedisUtil.getJedis().set("newname", "中文测试");
