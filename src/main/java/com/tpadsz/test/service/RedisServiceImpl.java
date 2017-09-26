@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
 
-@Repository("redisService")
+//@Repository("redisService")
 public class RedisServiceImpl implements RedisService {
     private static final Logger log = LoggerFactory.getLogger(RedisServiceImpl.class);
 

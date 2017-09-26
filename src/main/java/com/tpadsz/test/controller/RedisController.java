@@ -16,7 +16,7 @@ import java.io.IOException;
 /**
  * Created by hongjian.chen on 2017/3/30.
  */
-@Controller
+//@Controller
 public class RedisController {
     private static final Logger logger = LoggerFactory.getLogger(RedisController.class);
     @Resource

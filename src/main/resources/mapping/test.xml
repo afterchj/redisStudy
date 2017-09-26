@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tpadsz.test.dao.RedisDao">
+
+    <resultMap id="values" type="map">
+        <result property="id" column="id" javaType="string"/>
+        <result property="configs" column="configs" javaType="string"/>
+        <result property="detail" column="detail" javaType="string"/>
+    </resultMap>
+
+<select id="getByType" parameterType="string" resultMap="values">
+    SELECT id,configs,detail from f_task_setting_app WHERE type=#{type}
+</select>
+
+    <!--<select id="selectUserByPhoneOrEmail" resultMap="UserBaseMap">-->
+    <!--SELECT * FROM t_user-->
+    <!--WHERE user_email = #{emailOrPhone} OR user_phone = #{emailOrPhone}-->
+    <!--AND user_state = #{state}-->
+    <!--</select>-->
+
+
+
+</mapper>

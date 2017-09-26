@@ -1,17 +1,21 @@
 package com.tpadsz.test.demo;
 
+import com.tpadsz.test.dao.RedisDao;
+import com.tpadsz.test.entity.User;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class MyTest {
-    private static ApplicationContext ctx;
+    private static ClassPathXmlApplicationContext ctx;
 
     static {
         ctx = new ClassPathXmlApplicationContext("conf/applicationContext.xml");
@@ -19,11 +23,69 @@ public class MyTest {
 
     private static RedisTemplate redisTemplate = (RedisTemplate) ctx.getBean("redisTemplate");
 
-    public static void main(String[] args) {
-//        testMap();
-//        test();
-        testSet();
-        testList();
+    @Test
+    public void testEntity() {
+//        redisTemplate.delete("testUserList");
+        List<User> list = new ArrayList<User>();
+
+        for (int i = 0; i < 3; i++) {
+            User user = new User();
+            user.setId(i);
+            user.setName("test" + i);
+            user.setPwd("00" + i);
+            list.add(user);
+        }
+//        redisTemplate.opsForValue().set("testEntity", list,10, TimeUnit.MINUTES);
+//        redisTemplate.opsForList().leftPushAll("testUserList", list);
+//        redisTemplate.opsForValue().set("testUserList", list);
+        User user1 = new User();
+        user1.setId(121);
+        user1.setName("admin");
+        user1.setPwd("admin");
+        redisTemplate.opsForList().set("testUserList", 1, user1);
+        List<User> resultBlackList = redisTemplate.opsForList().range("testUserList", 0, -1);
+        for (int i = 0; i < resultBlackList.size(); i++) {
+            if (resultBlackList.get(i) instanceof User) {
+                System.out.println(resultBlackList.get(i).toString());
+                System.out.println("id=" + resultBlackList.get(i).getId() + ",name=" + resultBlackList.get(i).getName() + ",password=" + resultBlackList.get(i).getPwd());
+            }
+        }
+    }
+
+    @Test
+    public void testList() {
+//        redisTemplate.delete("lisKey1");
+        List<String> list1 = new ArrayList<String>();
+        list1.add("a1");
+        list1.add("a2");
+        list1.add("a3");
+
+//        redisTemplate.opsForList().leftPushAll("lisKey1", list1);
+        List<String> resultList1 = (List<String>) redisTemplate.opsForList().range("lisKey1", 0, -1);
+//        redisTemplate.opsForList().set("lisKey1",3,"a4");
+
+        System.out.println(redisTemplate.opsForList().size("lisKey1"));
+        System.out.println("resultList=" + resultList1);
+        System.out.println("resultList3="+resultList1.get(3).toString());
+    }
+
+    @Test
+    public void testRedis() {
+        SqlSessionFactory factory = (SqlSessionFactory) ctx.getBean("sqlSessionFactory");
+        SqlSession session = factory.openSession();
+        List<Map> maps = session.getMapper(RedisDao.class).getByType("cpaWeb");
+        for (int i = 0; i < maps.size(); i++) {
+            Map map1 = maps.get(i);
+            System.out.println(map1);
+        }
+        redisTemplate.opsForList().rightPushAll("cpaWeb", maps);
+        redisTemplate.expire("cpaWeb", 10, TimeUnit.MINUTES);
+        List<Map> resultList = (List<Map>) redisTemplate.opsForList().range("cpaWeb", 0, -1);
+        for (int i = 0; i < resultList.size(); i++) {
+            System.out.println(resultList.get(i));
+        }
+//        System.out.println("resultList1=" + resultList);
+        System.out.println(maps.size());
     }
 
     public static void testMap() {
@@ -60,25 +122,6 @@ public class MyTest {
         System.out.println("resultSet:" + resultSet);
     }
 
-    public static void testList() {
-        List<String> list1 = new ArrayList<String>();
-        list1.add("a1");
-        list1.add("a2");
-        list1.add("a3");
-
-        List<String> list2 = new ArrayList<String>();
-        list2.add("b1");
-        list2.add("b2");
-        list2.add("b3");
-        redisTemplate.opsForList().leftPush("lisKey1", list1);
-        redisTemplate.opsForList().rightPush("listKey2", list2);
-
-        List<String> resultList1 = (List<String>) redisTemplate.opsForList().leftPop("lisKey1");
-
-        List<String> resultList2 = (List<String>) redisTemplate.opsForList().rightPop("listKey2");
-        System.out.println("resultList1:" + resultList1);
-        System.out.println("resultList2:" + resultList2);
-    }
 
     @Test
     public void test() {
@@ -90,15 +133,15 @@ public class MyTest {
 
 //        redisTemplate.delete("cic_cache_account_bf51db3e52aa4ddbacf724fcd812b04a");
 //        redisTemplate.opsForHash().put("cic_cache_account_bf51db3e52aa4ddbacf724fcd812b04a","avail","100000");
-        String str= (String) redisTemplate.opsForHash().get("cic_cache_account_bf51db3e52aa4ddbacf724fcd812b04a","avail");
+        String str = (String) redisTemplate.opsForHash().get("cic_cache_account_bf51db3e52aa4ddbacf724fcd812b04a", "avail");
 //        Map<String,String> values=new HashMap();
 //        values.put("name","after");
 //        values.put("sex","male");
 //        values.put("age","19");
 //        redisTemplate.opsForHash().putAll("testHash",values);
-        redisTemplate.opsForHash().put("testHash","cost","1000");
-        Map<String,String> map=redisTemplate.opsForHash().entries("testHash");
-        for (Map.Entry<String,String> entry:map.entrySet()){
+        redisTemplate.opsForHash().put("testHash", "cost", "1000");
+        Map<String, String> map = redisTemplate.opsForHash().entries("testHash");
+        for (Map.Entry<String, String> entry : map.entrySet()) {
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
         }
         System.out.println("str=" + str + ",result=" + redisTemplate.hasKey("cic_cache_account_bf51db3e52aa4ddbacf724fcd812b04a"));
