@@ -1,5 +1,9 @@
 package com.tpadsz.test.demo;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.sun.javafx.collections.MappingChange;
 import com.tpadsz.test.dao.RedisDao;
 import com.tpadsz.test.entity.User;
 import org.apache.ibatis.session.SqlSession;
@@ -12,7 +16,6 @@ import org.springframework.data.redis.core.ValueOperations;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class MyTest {
     private static ClassPathXmlApplicationContext ctx;
@@ -35,7 +38,7 @@ public class MyTest {
             user.setPwd("00" + i);
             list.add(user);
         }
-//        redisTemplate.opsForValue().set("testEntity", list,10, TimeUnit.MINUTES);
+//        redisTemplate.opsForValue().set("testEntity", list);
 //        redisTemplate.opsForList().leftPushAll("testUserList", list);
 //        redisTemplate.opsForValue().set("testUserList", list);
         User user1 = new User();
@@ -66,23 +69,50 @@ public class MyTest {
 
         System.out.println(redisTemplate.opsForList().size("lisKey1"));
         System.out.println("resultList=" + resultList1);
-        System.out.println("resultList3="+resultList1.get(3).toString());
+        System.out.println("resultList3=" + resultList1.get(3).toString());
     }
 
     @Test
     public void testRedis() {
         SqlSessionFactory factory = (SqlSessionFactory) ctx.getBean("sqlSessionFactory");
         SqlSession session = factory.openSession();
-        List<Map> maps = session.getMapper(RedisDao.class).getByType("cpaWeb");
-        for (int i = 0; i < maps.size(); i++) {
-            Map map1 = maps.get(i);
-            System.out.println(map1);
+        List<Map> maps = session.getMapper(RedisDao.class).getByType("hpWeb");
+//        for (int i = 0; i < maps.size(); i++) {
+//            Map map1 = maps.get(i);
+//            System.out.println(map1);
+//        }
+
+//        redisTemplate.opsForValue().set("testMap", maps,1,TimeUnit.DAYS);
+
+//        redisTemplate.opsForList().rightPushAll("cpaWeb", maps);
+//        redisTemplate.expire("cpaWeb", 10, TimeUnit.MINUTES);
+        String result = redisTemplate.opsForValue().get("cpaWeb", 0, -1);
+        System.out.println("result=" + result);
+        JSONArray array = JSON.parseArray(result);
+        if (array!=null&&array.size()>0) {
+            System.out.println("array=" + array.size());
         }
-        redisTemplate.opsForList().rightPushAll("cpaWeb", maps);
-        redisTemplate.expire("cpaWeb", 10, TimeUnit.MINUTES);
-        List<Map> resultList = (List<Map>) redisTemplate.opsForList().range("cpaWeb", 0, -1);
+        List<Map> resultList = (List<Map>) redisTemplate.opsForList().range("hpWeb", 0, -1);
+        System.out.println("resultList=" + resultList);
+        String jsonStr = JSON.toJSONString(resultList);
+        JSONArray jsonArray = JSON.parseArray(jsonStr);
+        System.out.println("----------------------------------------------------------------------------------");
+        System.out.println("jsonArray=" + jsonArray.get(1));
+        System.out.println("----------------------------------------------------------------------------------");
+        JSONObject jsonObject = JSON.parseObject(jsonArray.get(1).toString());
+        JSONArray arr=(JSONArray)JSON.parseObject(jsonObject.get("configs").toString()).get("taskTag");
+
+        System.out.println(arr.get(0)+" "+arr.get(1));
+        System.out.println("jsonObject="+jsonObject.get("configs"));
+
+//        JSONArray array1=JSON.parseArray(jsonObject.get("taskTag").toString());
+//        System.out.println("array1=" + array1.get(0)+"array2"+array1.get(1));
+        System.out.println("----------------------------------------------------------------------------------");
+
+        List<Map> testJsonMap = JSON.parseArray(jsonStr, Map.class);
+        System.out.println("testJsonMap.size=" + testJsonMap);
         for (int i = 0; i < resultList.size(); i++) {
-            System.out.println(resultList.get(i));
+            System.out.println(resultList.get(i).get("configs") + "   " + resultList.get(i).get("detail"));
         }
 //        System.out.println("resultList1=" + resultList);
         System.out.println(maps.size());
