@@ -57,7 +57,7 @@ public class MyTest {
 
     @Test
     public void testList() {
-//        redisTemplate.delete("lisKey1");
+//        redisTemplate.delete("test");
         List<String> list1 = new ArrayList<String>();
         list1.add("a1");
         list1.add("a2");
@@ -89,7 +89,7 @@ public class MyTest {
         String result = redisTemplate.opsForValue().get("cpaWeb", 0, -1);
         System.out.println("result=" + result);
         JSONArray array = JSON.parseArray(result);
-        if (array!=null&&array.size()>0) {
+        if (array != null && array.size() > 0) {
             System.out.println("array=" + array.size());
         }
         List<Map> resultList = (List<Map>) redisTemplate.opsForList().range("hpWeb", 0, -1);
@@ -100,10 +100,10 @@ public class MyTest {
         System.out.println("jsonArray=" + jsonArray.get(1));
         System.out.println("----------------------------------------------------------------------------------");
         JSONObject jsonObject = JSON.parseObject(jsonArray.get(1).toString());
-        JSONArray arr=(JSONArray)JSON.parseObject(jsonObject.get("configs").toString()).get("taskTag");
+        JSONArray arr = (JSONArray) JSON.parseObject(jsonObject.get("configs").toString()).get("taskTag");
 
-        System.out.println(arr.get(0)+" "+arr.get(1));
-        System.out.println("jsonObject="+jsonObject.get("configs"));
+        System.out.println(arr.get(0) + " " + arr.get(1));
+        System.out.println("jsonObject=" + jsonObject.get("configs"));
 
 //        JSONArray array1=JSON.parseArray(jsonObject.get("taskTag").toString());
 //        System.out.println("array1=" + array1.get(0)+"array2"+array1.get(1));
@@ -118,7 +118,8 @@ public class MyTest {
         System.out.println(maps.size());
     }
 
-    public static void testMap() {
+    @Test
+    public void testMap() {
         Map map = new HashMap();
         map.put("id", "123aw21sad231a232313");
         map.put("uid", "aw2121xwwq12121s121");
@@ -126,30 +127,36 @@ public class MyTest {
         map.put("imsi", "112121212");
         map.put("createDate", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 
-        redisTemplate.opsForHash().putAll("mapRecord", map);
-
-        Map<String, String> resultMap = redisTemplate.opsForHash().entries("mapRecord");
-
-        List<String> reslutMapValues = redisTemplate.opsForHash().values("mapRecord");
-
-        Set<String> resultMapKeys = redisTemplate.opsForHash().keys("mapRecord");
-
-        String value = (String) redisTemplate.opsForHash().get("mapRecord", "createDate");
-        System.out.println("value:" + value);
-
-        System.out.println("resultMapKeys:" + resultMapKeys);
-        System.out.println("resultMap:" + resultMap);
-        System.out.println("reslutMapValues:" + reslutMapValues);
+        String json = JSON.toJSONString(map);
+        System.out.println("json=" + json);
+//        redisTemplate.opsForHash().putAll("mapRecord", map);
+//        Map<String, String> resultMap = redisTemplate.opsForHash().entries("mapRecord");
+//        List<String> reslutMapValues = redisTemplate.opsForHash().values("mapRecord");
+//        Set<String> resultMapKeys = redisTemplate.opsForHash().keys("mapRecord");
+//        String value = (String) redisTemplate.opsForHash().get("mapRecord", "createDate");
+//        System.out.println("value:" + value);
+//        System.out.println("resultMapKeys:" + resultMapKeys);
+//        System.out.println("resultMap:" + resultMap);
+//        System.out.println("reslutMapValues:" + reslutMapValues);
     }
 
-    public static void testSet() {
+    @Test
+    public void testSet() {
+        String str = "Hello World";
+        System.out.println(str);
+//        redisTemplate.opsForValue().set("key03", str);
+//        redisTemplate.opsForValue().append("key02", str);
+        Object result = redisTemplate.opsForValue().get("testOpsForValues");
+        System.out.println("result="+result);
+        String key02 = redisTemplate.opsForValue().get("key02", 0, -1);
+        System.out.println(redisTemplate.opsForValue().get("key03", 0, -1));
         Set<String> set1 = new HashSet<String>();
         set1.add("set1");
         set1.add("set2");
         set1.add("set3");
-        redisTemplate.opsForSet().add("set1", set1);
-        Set<String> resultSet = redisTemplate.opsForSet().members("set1");
-        System.out.println("resultSet:" + resultSet);
+//        redisTemplate.opsForSet().difference("helloSet", set1);
+//        Set<String> resultSet = redisTemplate.opsForSet().members("testSet");
+//        System.out.println("resultSet:" + resultSet);
     }
 
 

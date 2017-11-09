@@ -8,7 +8,7 @@
 
 
     <context:component-scan base-package="com.tpadsz.test"/>
-
+    <tx:annotation-driven/>
     <!-- 配置数据源 -->
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
           destroy-method="close">
@@ -66,10 +66,7 @@
     </bean>
 
     <!-- redis template definition -->
-    <bean
-            id="redisTemplate"
-            class="org.springframework.data.redis.core.RedisTemplate"
-            p:connection-factory-ref="jedisConnectionFactory">
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" p:connection-factory-ref="jedisConnectionFactory">
         <property name="valueSerializer">
             <bean class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer"/>
         </property>

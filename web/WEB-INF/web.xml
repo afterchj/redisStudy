@@ -6,7 +6,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:application_Context.xml</param-value>
+        <param-value>classpath:conf/applicationContext.xml</param-value>
     </context-param>
 
     <context-param>

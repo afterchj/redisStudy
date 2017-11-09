@@ -12,6 +12,7 @@
     <title>Show result</title>
 </head>
 <body>
-测试结果：${result}
+Test is ok!
+<%--测试结果：${msg}--%>
 </body>
 </html>

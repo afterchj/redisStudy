@@ -12,6 +12,7 @@
 </head>
 <body>
 This is a jsp page!<br>
+<a href="show.html">show</a><br>
 <a href="hello.do">mvc</a>
 </body>
 </html>

@@ -7,7 +7,7 @@
     <groupId>com.tpadsz.redis</groupId>
     <artifactId>redisDemo</artifactId>
     <version>1.0-SNAPSHOT</version>
-
+    <packaging>war</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -185,6 +185,7 @@
     </dependencies>
 
     <build>
+        <finalName>myWork</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

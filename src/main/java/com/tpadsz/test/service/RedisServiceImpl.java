@@ -3,36 +3,25 @@ package com.tpadsz.test.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import redis.clients.jedis.ShardedJedis;
-import redis.clients.jedis.ShardedJedisPool;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
-//@Repository("redisService")
+@Service("redisService")
 public class RedisServiceImpl implements RedisService {
     private static final Logger log = LoggerFactory.getLogger(RedisServiceImpl.class);
 
     @Autowired
-    private ShardedJedisPool shardedJedisPool;
+    private RedisTemplate redisTemplate;
 
-    public ShardedJedis getRedisClient() {
-        try {
-            ShardedJedis shardJedis = shardedJedisPool.getResource();
-            return shardJedis;
-        } catch (Exception e) {
-            log.error("getRedisClent error", e);
-        }
-        return null;
+    public void set(String key, String value) {
+        redisTemplate.opsForValue().set(key, value);
     }
 
-    public void returnResource(ShardedJedis shardedJedis) {
-        shardedJedisPool.returnResource(shardedJedis);
+    public void append(String key, String str) {
+        redisTemplate.opsForValue().append(key, str);
     }
 
-    public void returnResource(ShardedJedis shardedJedis, boolean broken) {
-        if (broken) {
-            shardedJedisPool.returnBrokenResource(shardedJedis);
-        } else {
-            shardedJedisPool.returnResource(shardedJedis);
-        }
+    public String get(String key) {
+        return redisTemplate.opsForValue().get(key, 0, -1);
     }
 }
