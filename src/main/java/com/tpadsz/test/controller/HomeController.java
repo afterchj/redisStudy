@@ -1,8 +1,5 @@
 package com.tpadsz.test.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.tpadsz.test.entity.Values;
 import com.tpadsz.test.utils.DbMySql;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -28,8 +25,6 @@ public class HomeController {
     @RequestMapping("/myFresh.do")
     public String testAppend(@RequestBody String params, ModelMap model) {
         int times = DbMySql.getTaskNum();
-//        JSONObject json=new JSONObject();
-//        json.put("result",times);
         System.out.println(times+"，刷新时间："+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         return String.valueOf(times);
     }
